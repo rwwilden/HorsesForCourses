@@ -1,0 +1,66 @@
+﻿CREATE TYPE IF NOT EXISTS RunnersType
+AS TABLE(Id int, Collected DateTime, MarketId int, Position int?, PlacePaid byte, Margin float?, HorseId int, TrainerId int?, RiderId int?, HandicapWeight float, Number int, Barrier int, Blinkers string, Emergency string, FormRatingOne float?, FormRatingTwo float?, FormRatingThree float?, LastFiveStarts string, FavouriteOddsWin string, FavouriteOddsPlace string, FavouritePoolWin string, FavouritePoolPlace string, TipOneWin string, TipOnePlace string, TipTwoWin string, TiptwoPlace string, TipThreeWin string, TipThreePlace string, TipFourWin string, TipfourPlace string, TipFiveWin string, TipFivePlace string, TipSixWin string, TipsixPlace string, TipSevenWin string, TipSevenPlace string, TipEightWin string, TipEightPlace string, TipNineWin string, TipNinePlace string);
+
+DROP TABLE IF EXISTS Runners;
+DROP FUNCTION IF EXISTS RunnersTVF;
+
+CREATE FUNCTION RunnersTVF()
+RETURNS @runners RunnersType
+AS
+BEGIN
+    @runners =
+        EXTRACT Id int,
+                Collected DateTime,
+                MarketId int,
+                Position int?,
+                PlacePaid byte,
+                Margin float?,
+                HorseId int,
+                TrainerId int?,
+                RiderId int?,
+                HandicapWeight float,
+                Number int,
+                Barrier int,
+                Blinkers string,
+                Emergency string,
+                FormRatingOne float?,
+                FormRatingTwo float?,
+                FormRatingThree float?,
+                LastFiveStarts string,
+                FavouriteOddsWin string,
+                FavouriteOddsPlace string,
+                FavouritePoolWin string,
+                FavouritePoolPlace string,
+                TipOneWin string,
+                TipOnePlace string,
+                TipTwoWin string,
+                TiptwoPlace string,
+                TipThreeWin string,
+                TipThreePlace string,
+                TipFourWin string,
+                TipfourPlace string,
+                TipFiveWin string,
+                TipFivePlace string,
+                TipSixWin string,
+                TipsixPlace string,
+                TipSevenWin string,
+                TipSevenPlace string,
+                TipEightWin string,
+                TipEightPlace string,
+                TipNineWin string,
+                TipNinePlace string
+        FROM "wasb://raw@rwwildenml.blob.core.windows.net/runners.csv"
+        USING Extractors.Csv(skipFirstNRows : 1);
+END;
+
+CREATE TABLE Runners
+(
+    INDEX RunnersIdx
+    CLUSTERED(Id ASC)
+    PARTITIONED BY
+    HASH(HorseId)
+)
+AS
+RunnersTVF
+(
+);

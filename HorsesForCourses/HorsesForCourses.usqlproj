@@ -1,0 +1,70 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>d2ed5cf9-ebe4-40e7-aff3-264db88dcd55</ProjectGuid>
+    <OutputType>File</OutputType>
+    <AssemblyName>Algebra.xml</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <Name>HorsesForCourses</Name>
+    <RootNamespace>HorsesForCourses</RootNamespace>
+    <RuntimeVersion>default</RuntimeVersion>
+    <OutputStreamPath>C:\Temp\USQLDataRoot</OutputStreamPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Script Include="Analysis\Ages.usql" />
+    <Script Include="Analysis\Barriers.usql" />
+    <Script Include="Analysis\BarriersAge.usql" />
+    <Script Include="Analysis\BarriersAgeHandicapWeightResults.usql" />
+    <Script Include="DDL\Forms.usql" />
+    <Script Include="DDL\Horses.usql" />
+    <Script Include="DDL\Pairings.usql" />
+    <Script Include="DDL\Runners.usql" />
+    <Script Include="DDL\Weathers.usql" />
+    <Script Include="Script1.usql" />
+    <ScriptCode Include="Analysis\Ages.usql.cs">
+      <DependentUpon>Analysis\Ages.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Analysis\Barriers.usql.cs">
+      <DependentUpon>Analysis\Barriers.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Analysis\BarriersAge.usql.cs">
+      <DependentUpon>Analysis\BarriersAge.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Analysis\BarriersAgeHandicapWeightResults.usql.cs">
+      <DependentUpon>Analysis\BarriersAgeHandicapWeightResults.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="DDL\Forms.usql.cs">
+      <DependentUpon>DDL\Forms.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="DDL\Horses.usql.cs">
+      <DependentUpon>DDL\Horses.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="DDL\Pairings.usql.cs">
+      <DependentUpon>DDL\Pairings.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="DDL\Runners.usql.cs">
+      <DependentUpon>DDL\Runners.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="DDL\Weathers.usql.cs">
+      <DependentUpon>DDL\Weathers.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Script1.usql.cs">
+      <DependentUpon>Script1.usql</DependentUpon>
+    </ScriptCode>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DDL" />
+    <Folder Include="Analysis" />
+  </ItemGroup>
+  <Import Project="$(AppData)\Microsoft\DataLake\MsBuild\1.0\Usql.targets" />
+</Project>

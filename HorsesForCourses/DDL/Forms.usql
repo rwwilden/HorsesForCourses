@@ -1,0 +1,77 @@
+﻿CREATE TYPE IF NOT EXISTS FormsType
+AS TABLE(CollectedAt DateTime, MarketId int, HorseId int, RunnerNr int, LastTwentyStarts string, ClassLevelId int, FieldStrength float?, DaysSinceLastRun int, RunsSinceSpell int, OverallStarts int, OverallWins int, OverallPlaces int, TrackStarts int, TrackWins int, TrackPlaces int, FirmStarts int, FirmWins int, FirmPlaces int, GoodStarts int, GoodWins int, GoodPlaces int, DeadStarts int, DeadWins int, DeadPlaces int, SlowStarts int, SlowWins int, SlowPlaces int, SoftStarts int, SoftWins int, SoftPlaces int, HeavyStarts int, HeavyWins int, HeavyPlaces int, DistanceStarts int, DistanceWins int, DistancePlaces int, ClassSameStarts int, ClassSameWins int, ClassSamePlaces int, ClassStrongerStarts int, ClassStrongerWins int, ClassStrongerPlaces int, FirstUpStarts int, FirstUpWins int, FirstUpPlaces int, SecondUpStarts int, SecondUpWins int, SecondUpPlaces int, TrackDistanceStarts int, TrackDistanceWins int, TrackDistancePlaces int);
+
+DROP TABLE IF EXISTS Forms;
+DROP FUNCTION IF EXISTS FormsTVF;
+
+CREATE FUNCTION FormsTVF()
+RETURNS @forms FormsType
+AS
+BEGIN
+    @forms =
+        EXTRACT CollectedAt DateTime,
+                MarketId int,
+                HorseId int,
+                RunnerNr int,
+                LastTwentyStarts string,
+                ClassLevelId int,
+                FieldStrength float?,
+                DaysSinceLastRun int,
+                RunsSinceSpell int,
+                OverallStarts int,
+                OverallWins int,
+                OverallPlaces int,
+                TrackStarts int,
+                TrackWins int,
+                TrackPlaces int,
+                FirmStarts int,
+                FirmWins int,
+                FirmPlaces int,
+                GoodStarts int,
+                GoodWins int,
+                GoodPlaces int,
+                DeadStarts int,
+                DeadWins int,
+                DeadPlaces int,
+                SlowStarts int,
+                SlowWins int,
+                SlowPlaces int,
+                SoftStarts int,
+                SoftWins int,
+                SoftPlaces int,
+                HeavyStarts int,
+                HeavyWins int,
+                HeavyPlaces int,
+                DistanceStarts int,
+                DistanceWins int,
+                DistancePlaces int,
+                ClassSameStarts int,
+                ClassSameWins int,
+                ClassSamePlaces int,
+                ClassStrongerStarts int,
+                ClassStrongerWins int,
+                ClassStrongerPlaces int,
+                FirstUpStarts int,
+                FirstUpWins int,
+                FirstUpPlaces int,
+                SecondUpStarts int,
+                SecondUpWins int,
+                SecondUpPlaces int,
+                TrackDistanceStarts int,
+                TrackDistanceWins int,
+                TrackDistancePlaces int
+        FROM "wasb://raw@rwwildenml.blob.core.windows.net/forms.csv"
+        USING Extractors.Csv(skipFirstNRows : 1);
+END;
+
+CREATE TABLE Forms
+(
+    INDEX FormsIdx
+    CLUSTERED(HorseId ASC, MarketId ASC)
+    PARTITIONED BY
+    HASH(HorseId)
+)
+AS
+FormsTVF
+(
+);

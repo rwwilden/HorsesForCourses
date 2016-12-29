@@ -1,0 +1,25 @@
+﻿@barriers =
+    SELECT r0.Barrier AS Barrier0,
+           h0.Age AS Age0,
+           r0.HandicapWeight AS HandicapWeight0,
+           r1.Barrier AS Barrier1,
+           h1.Age AS Age1,
+           r1.HandicapWeight AS HandicapWeight1,
+           p.Won
+    FROM master.dbo.Pairings AS p
+         JOIN
+             master.dbo.Runners AS r0
+         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
+         JOIN
+             master.dbo.Runners AS r1
+         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId
+         JOIN
+             master.dbo.Horses AS h0
+         ON p.HorseId0 == h0.Id
+         JOIN
+             master.dbo.Horses AS h1
+         ON p.HorseId1 == h1.Id;
+
+OUTPUT @barriers
+TO "/output/barriers_age_hw.csv"
+USING Outputters.Csv();

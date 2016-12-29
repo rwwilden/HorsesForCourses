@@ -1,0 +1,28 @@
+﻿CREATE TYPE IF NOT EXISTS WeathersType
+AS TABLE(Id int, Name string);
+
+DROP TABLE IF EXISTS Weathers;
+DROP FUNCTION IF EXISTS WeathersTVF;
+
+CREATE FUNCTION WeathersTVF()
+RETURNS @weathers WeathersType
+AS
+BEGIN
+    @weathers =
+        EXTRACT Id int,
+                Name string
+        FROM "wasb://raw@rwwildenml.blob.core.windows.net/weathers.csv"
+        USING Extractors.Csv(skipFirstNRows : 1);
+END;
+
+CREATE TABLE Weathers
+(
+    INDEX WeathersIdx
+    CLUSTERED(Id ASC)
+    PARTITIONED BY
+    DIRECT HASH (Id)
+)
+AS
+WeathersTVF
+(
+);

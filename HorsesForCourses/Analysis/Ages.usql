@@ -1,0 +1,12 @@
+﻿@ages =
+    SELECT h0.Age AS Age0,
+           h1.Age AS Age1,
+           p.Won
+    FROM master.dbo.Pairings AS p
+    JOIN master.dbo.Horses AS h0 ON p.HorseId0 == h0.Id
+    JOIN master.dbo.Horses AS h1 ON p.HorseId1 == h1.Id
+    WHERE h0.Age.HasValue AND h1.Age.HasValue;
+
+OUTPUT @ages
+TO "wasb://output@rwwildenml.blob.core.windows.net/ages.csv"
+USING Outputters.Csv();

@@ -1,0 +1,22 @@
+﻿DROP TABLE IF EXISTS Pairings;
+
+CREATE TABLE Pairings
+(
+    INDEX PairingsIdx
+    CLUSTERED(HorseId0 ASC, HorseId1 ASC)
+    PARTITIONED BY HASH (HorseId0, HorseId1)
+)
+AS
+SELECT r0.MarketId,
+       r0.HorseId AS HorseId0,
+       r1.HorseId AS HorseId1,
+       HorsesForCourses.Functions.Won(r0.Position.Value, r1.Position.Value) AS Won,
+       HorsesForCourses.Functions.Distance(r0.Position.Value, r1.Position.Value) AS Distance
+FROM master.dbo.Runners AS r0
+     JOIN
+         master.dbo.Runners AS r1
+     ON r0.MarketId == r1.MarketId
+WHERE
+r0.HorseId != r1.HorseId
+AND r0.Position.HasValue
+AND r1.Position.HasValue;

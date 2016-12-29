@@ -1,0 +1,38 @@
+﻿@barriers =
+    SELECT MAX(r0.Barrier) AS Barrier0,
+           MAX(h0.Age) AS Age0,
+           MAX(r0.HandicapWeight) AS HandicapWeight0,
+           AGG<HorsesForCourses.LastTwentyStartsAggregate>(f0.LastTwentyStarts) AS CollectedAt0,
+           MAX(r1.Barrier) AS Barrier1,
+           MAX(h1.Age) AS Age1,
+           MAX(r1.HandicapWeight) AS HandicapWeight1,
+           AGG<HorsesForCourses.LastTwentyStartsAggregate>(f1.LastTwentyStarts) AS CollectedAt1,
+           p.Won
+    FROM master.dbo.Pairings AS p
+         JOIN
+             master.dbo.Runners AS r0
+         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
+         JOIN
+             master.dbo.Runners AS r1
+         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId
+         JOIN
+             master.dbo.Horses AS h0
+         ON p.HorseId0 == h0.Id
+         JOIN
+             master.dbo.Horses AS h1
+         ON p.HorseId1 == h1.Id
+         JOIN
+             master.dbo.Forms AS f0
+         ON p.HorseId0 == f0.HorseId AND p.MarketId == f0.MarketId
+         JOIN
+             master.dbo.Forms AS f1
+         ON p.HorseId1 == f1.HorseId AND p.MarketId == f1.MarketId
+
+    GROUP BY p.MarketId,
+             p.HorseId0,
+             p.HorseId1,
+             p.Won;
+
+OUTPUT @barriers
+TO "/output/barriers_age_hw_results.csv"
+USING Outputters.Csv();

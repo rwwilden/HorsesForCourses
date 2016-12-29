@@ -1,0 +1,32 @@
+﻿CREATE TYPE IF NOT EXISTS HorsesType
+AS TABLE(Id int, Age int?, SexId int?, SireId int?, DamId int?, PrizeMoney float?);
+
+DROP TABLE IF EXISTS Horses;
+DROP FUNCTION IF EXISTS HorsesTVF;
+
+CREATE FUNCTION HorsesTVF()
+RETURNS @horses HorsesType
+AS
+BEGIN
+    @horses =
+        EXTRACT Id int,
+                Age int?,
+                SexId int?,
+                SireId int?,
+                DamId int?,
+                PrizeMoney float?
+        FROM "wasb://raw@rwwildenml.blob.core.windows.net/horses.csv"
+        USING Extractors.Csv(skipFirstNRows : 1);
+END;
+
+CREATE TABLE Horses
+(
+    INDEX HorsesIdx
+    CLUSTERED(Id ASC)
+    PARTITIONED BY
+    HASH(Id)
+)
+AS
+HorsesTVF
+(
+);

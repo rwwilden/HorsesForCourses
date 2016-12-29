@@ -1,0 +1,15 @@
+﻿@barriers =
+    SELECT r0.Barrier AS Barrier0,
+           r1.Barrier AS Barrier1,
+           p.Won
+    FROM master.dbo.Pairings AS p
+         JOIN
+             master.dbo.Runners AS r0
+         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
+         JOIN
+             master.dbo.Runners AS r1
+         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId;
+
+OUTPUT @barriers
+TO "wasb://output@rwwildenml.blob.core.windows.net/barriers.csv"
+USING Outputters.Csv();

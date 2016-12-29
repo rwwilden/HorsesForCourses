@@ -1,0 +1,24 @@
+﻿@horseCounts =
+    SELECT
+        HorseId
+      , COUNT(HorseId) AS Count
+      , AGG<HorsesForCourses.LastTwentyRacesCount>(CollectedAt, LastTwentyStarts) AS Incremental
+    FROM master.dbo.Forms
+    GROUP BY HorseId
+    HAVING COUNT(HorseId) > 1
+       AND NOT AGG<HorsesForCourses.LastTwentyRacesCount>(CollectedAt, LastTwentyStarts);
+
+@incrementalCounts =
+    SELECT
+        Incremental
+      , COUNT(HorseId) AS HorseCount
+    FROM @horseCounts
+    GROUP BY Incremental;
+
+OUTPUT @horseCounts
+TO "/output/horseCounts.tsv"
+USING Outputters.Tsv();
+
+OUTPUT @incrementalCounts
+TO "/output/incrementalCounts.tsv"
+USING Outputters.Tsv();
