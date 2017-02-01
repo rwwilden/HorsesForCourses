@@ -1,0 +1,5 @@
+﻿@pairings = SELECT * FROM master.dbo.Pairings;
+
+OUTPUT @pairings
+TO "wasb://output@rwwildenml.blob.core.windows.net/pairings.csv"
+USING Outputters.Csv();

@@ -25,6 +25,8 @@
     <Script Include="Analysis\Barriers.usql" />
     <Script Include="Analysis\BarriersAge.usql" />
     <Script Include="Analysis\BarriersAgeHandicapWeightResults.usql" />
+    <Script Include="Analysis\Last5Starts.usql" />
+    <Script Include="Analysis\Pairings.usql" />
     <Script Include="DDL\Forms.usql" />
     <Script Include="DDL\Horses.usql" />
     <Script Include="DDL\Pairings.usql" />
@@ -42,6 +44,12 @@
     </ScriptCode>
     <ScriptCode Include="Analysis\BarriersAgeHandicapWeightResults.usql.cs">
       <DependentUpon>Analysis\BarriersAgeHandicapWeightResults.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Analysis\Last5Starts.usql.cs">
+      <DependentUpon>Analysis\Last5Starts.usql</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Analysis\Pairings.usql.cs">
+      <DependentUpon>Analysis\Pairings.usql</DependentUpon>
     </ScriptCode>
     <ScriptCode Include="DDL\Forms.usql.cs">
       <DependentUpon>DDL\Forms.usql</DependentUpon>

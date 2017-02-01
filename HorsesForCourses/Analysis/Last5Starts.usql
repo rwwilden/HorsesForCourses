@@ -1,0 +1,17 @@
+﻿DROP TABLE IF EXISTS Last5Starts;
+
+@last5Starts =
+    SELECT r0.LastFiveStarts,
+           r1.LastFiveStarts,
+           p.Won
+    FROM master.dbo.Pairings AS p
+         JOIN
+             master.dbo.Runners AS r0
+         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
+         JOIN
+             master.dbo.Runners AS r1
+         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId;
+
+OUTPUT @last5Starts
+TO "wasb://output@rwwildenml.blob.core.windows.net/last5starts.csv"
+USING Outputters.Csv();
