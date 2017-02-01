@@ -1,8 +1,26 @@
-﻿DROP TABLE IF EXISTS Last5Starts;
+﻿@maxBarriers =
+    SELECT r.MarketId,
+           (float) MAX(r.Barrier) AS MaxBarrier
+    FROM master.dbo.Runners AS r
+    GROUP BY r.MarketId;
+
+
+@avgMaxBarrier =
+    SELECT AVG(MaxBarrier) AS AvgMaxBarrier
+    FROM @maxBarriers;
+
+
+@avgMaxBarrierLargerThan9 =
+    SELECT AVG(MaxBarrier - 9) AS AvgMaxBarrier
+    FROM @maxBarriers
+    WHERE MaxBarrier > 9;
+
 
 @last5Starts =
-    SELECT r0.LastFiveStarts,
-           r1.LastFiveStarts,
+    SELECT r0.LastFiveStarts AS LastFiveStarts0,
+           r1.LastFiveStarts AS LastFiveStarts1,
+           avg.AvgMaxBarrier AS Avg,
+           avg9.AvgMaxBarrier AS Avg9,
            p.Won
     FROM master.dbo.Pairings AS p
          JOIN
@@ -10,7 +28,11 @@
          ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
          JOIN
              master.dbo.Runners AS r1
-         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId;
+         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId
+         CROSS JOIN
+             @avgMaxBarrier AS avg
+         CROSS JOIN
+             @avgMaxBarrierLargerThan9 AS avg9;
 
 OUTPUT @last5Starts
 TO "wasb://output@rwwildenml.blob.core.windows.net/last5starts.csv"
