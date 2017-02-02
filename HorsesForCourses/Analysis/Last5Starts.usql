@@ -6,21 +6,19 @@
 
 
 @avgMaxBarrier =
-    SELECT AVG(MaxBarrier) AS AvgMaxBarrier
+    SELECT AVG(MaxBarrier) / 2 AS AvgMaxBarrier
     FROM @maxBarriers;
 
 
 @avgMaxBarrierLargerThan9 =
-    SELECT AVG(MaxBarrier - 9) AS AvgMaxBarrier
+    SELECT AVG(MaxBarrier - 9) / 2 + 9 AS AvgMaxBarrier
     FROM @maxBarriers
     WHERE MaxBarrier > 9;
 
 
 @last5Starts =
-    SELECT r0.LastFiveStarts AS LastFiveStarts0,
-           r1.LastFiveStarts AS LastFiveStarts1,
-           avg.AvgMaxBarrier AS Avg,
-           avg9.AvgMaxBarrier AS Avg9,
+    SELECT HorsesForCourses.Udfs.AverageLastFiveStarts(r0.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts0,
+           HorsesForCourses.Udfs.AverageLastFiveStarts(r1.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts1,
            p.Won
     FROM master.dbo.Pairings AS p
          JOIN
