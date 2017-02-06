@@ -1,6 +1,6 @@
 ﻿@maxBarriers =
     SELECT r.MarketId,
-           (float) MAX(r.Barrier) AS MaxBarrier
+           (double) MAX(r.Barrier) AS MaxBarrier
     FROM master.dbo.Runners AS r
     GROUP BY r.MarketId;
 
