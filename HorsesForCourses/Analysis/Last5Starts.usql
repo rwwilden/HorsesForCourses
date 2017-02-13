@@ -1,37 +1,54 @@
-﻿@maxBarriers =
-    SELECT r.MarketId,
-           (double) MAX(r.Barrier) AS MaxBarrier
+﻿@avgNrHorses =
+    SELECT (((double) COUNT(r.HorseId)) + 1d) / 2d AS AvgNrHorses
     FROM master.dbo.Runners AS r
     GROUP BY r.MarketId;
 
+@avgPosition =
+    SELECT AVG(AvgNrHorses) AS AvgPosition
+    FROM @avgNrHorses;
 
-@avgMaxBarrier =
-    SELECT AVG(MaxBarrier) / 2 AS AvgMaxBarrier
-    FROM @maxBarriers;
-
-
-@avgMaxBarrierLargerThan9 =
-    SELECT AVG(MaxBarrier - 9) / 2 + 9 AS AvgMaxBarrier
-    FROM @maxBarriers
-    WHERE MaxBarrier > 9;
-
-
-@last5Starts =
-    SELECT HorsesForCourses.Udfs.AverageLastFiveStarts(r0.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts0,
-           HorsesForCourses.Udfs.AverageLastFiveStarts(r1.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts1,
-           p.Won
-    FROM master.dbo.Pairings AS p
-         JOIN
-             master.dbo.Runners AS r0
-         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
-         JOIN
-             master.dbo.Runners AS r1
-         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId
-         CROSS JOIN
-             @avgMaxBarrier AS avg
-         CROSS JOIN
-             @avgMaxBarrierLargerThan9 AS avg9;
-
-OUTPUT @last5Starts
-TO "wasb://output@rwwildenml.blob.core.windows.net/last5starts.csv"
+OUTPUT @avgPosition
+TO "wasb://output@rwwildenml.blob.core.windows.net/avgPosition.csv"
 USING Outputters.Csv();
+
+@avgNrHorsesAbove9 =
+    SELECT () AS AvgNrHorses
+    FROM master.dbo.Runners AS r
+
+//@maxBarriers =
+//    SELECT r.MarketId,
+//           (double) MAX(r.Barrier) AS MaxBarrier
+//    FROM master.dbo.Runners AS r
+//    GROUP BY r.MarketId;
+
+
+//@avgMaxBarrier =
+//    SELECT AVG(MaxBarrier) / 2 AS AvgMaxBarrier
+//    FROM @maxBarriers;
+
+
+//@avgMaxBarrierLargerThan9 =
+//    SELECT AVG(MaxBarrier - 9) / 2 + 9 AS AvgMaxBarrier
+//    FROM @maxBarriers
+//    WHERE MaxBarrier > 9;
+
+
+//@last5Starts =
+//    SELECT HorsesForCourses.Udfs.AverageLastFiveStarts(r0.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts0,
+//           HorsesForCourses.Udfs.AverageLastFiveStarts(r1.LastFiveStarts, avg.AvgMaxBarrier, avg9.AvgMaxBarrier) AS LastFiveStarts1,
+//           p.Won
+//    FROM master.dbo.Pairings AS p
+//         JOIN
+//             master.dbo.Runners AS r0
+//         ON p.HorseId0 == r0.HorseId AND p.MarketId == r0.MarketId
+//         JOIN
+//             master.dbo.Runners AS r1
+//         ON p.HorseId1 == r1.HorseId AND p.MarketId == r1.MarketId
+//         CROSS JOIN
+//             @avgMaxBarrier AS avg
+//         CROSS JOIN
+//             @avgMaxBarrierLargerThan9 AS avg9;
+
+//OUTPUT @last5Starts
+//TO "wasb://output@rwwildenml.blob.core.windows.net/last5starts.csv"
+//USING Outputters.Csv();
